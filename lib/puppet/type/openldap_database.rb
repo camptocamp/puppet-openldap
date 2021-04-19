@@ -147,6 +147,16 @@ Puppet::Type.newtype(:openldap_database) do
     end
   end
 
+  newparam(:organization) do
+    desc "Organization name used when initdb is true"
+
+    defaultto do
+      if @resource[:suffix].start_with?('dc=')
+        @resource[:suffix].split(/,?dc=/).delete_if { |c| c.empty? }.join('.')
+      end
+    end
+  end
+
   newproperty(:readonly) do
     desc "Puts the database into read-only mode."
   end

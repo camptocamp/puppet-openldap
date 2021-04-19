@@ -188,14 +188,16 @@ Puppet::Type.
     t << "objectClass: dcObject\n" if resource[:suffix].start_with?("dc=")
     t << "objectClass: organization\n"
     t << "dc: #{resource[:suffix].split(/,?dc=/).delete_if { |c| c.empty? }[0]}\n" if resource[:suffix].start_with?("dc=")
-    t << "o: #{resource[:suffix].split(/,?dc=/).delete_if { |c| c.empty? }.join('.')}\n" if resource[:suffix].start_with?("dc=")
-    t << "\n"
-    t << "dn: cn=admin,#{resource[:suffix]}\n"
-    t << "objectClass: simpleSecurityObject\n" if resource[:rootpw]
-    t << "objectClass: organizationalRole\n"
-    t << "cn: admin\n"
-    t << "description: LDAP administrator\n"
-    t << "userPassword: #{resource[:rootpw]}\n" if resource[:rootpw]
+    t << "o: #{resource[:organization]}\n" if resource[:organization]
+    if resource[:rootdn]
+      t << "\n"
+      t << "dn: #{resource[:rootdn]}\n"
+      t << "objectClass: simpleSecurityObject\n" if resource[:rootpw]
+      t << "objectClass: organizationalRole\n"
+      t << "cn: #{resource[:rootdn].split(/,|=/)[1]}\n"
+      t << "description: LDAP administrator\n"
+      t << "userPassword: #{resource[:rootpw]}\n" if resource[:rootpw]
+    end
     t.close
     Puppet.debug(IO.read t.path)
     begin
