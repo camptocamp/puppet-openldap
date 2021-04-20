@@ -1,0 +1,9 @@
+---
+openldap::client::package: "libldap-2.4-2"
+openldap::client::file: "/etc/ldap/ldap.conf"
+openldap::server::confdir: "/etc/ldap/slapd.d"
+openldap::server::conffile: "/etc/ldap/slapd.conf"
+openldap::server::group: "openldap"
+openldap::server::owner: "openldap"
+openldap::server::package: "slapd"
+openldap::utils::package: "ldap-utils"
