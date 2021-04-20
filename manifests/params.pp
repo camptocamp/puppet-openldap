@@ -81,7 +81,6 @@ class openldap::params {
       $server_owner             = 'ldap'
       $server_package           = 'openldap2'
       $server_service           = 'slapd'
-      $server_service_hasstatus = true
       $utils_package            = undef
       $escape_ldapi_ifs         = true
       $enable_chown             = true
