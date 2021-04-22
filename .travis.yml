@@ -33,33 +33,33 @@ matrix:
       env: CHECK="check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop syntax lint metadata_lint"
       stage: static
     -
-      env: PUPPET_GEM_VERSION="~> 5.0" CHECK=parallel_spec
-      rvm: 2.4.5
-      stage: spec
-    -
       env: PUPPET_GEM_VERSION="~> 6.0" CHECK=parallel_spec
-      rvm: 2.5.3
+      rvm: 2.5.7
       stage: spec
     -
-      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/centos:6]'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
+      env: PUPPET_GEM_VERSION="~> 7.0" CHECK=parallel_spec
+      rvm: 2.7
+      stage: spec
+    -
+      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/centos:6]'", "bundle exec rake 'litmus:install_agent[puppet6]'", "bundle exec rake litmus:install_module"]
       bundler_args: 
       env: PLATFORMS=centos6
-      rvm: 2.5.3
+      rvm: 2.5.7
       script: ["travis_wait 30 bundle exec rake litmus:acceptance:parallel"]
       services: docker
       stage: acceptance
       sudo: required
     -
-      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/centos:7]'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
+      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/centos:7]'", "bundle exec rake 'litmus:install_agent[puppet6]'", "bundle exec rake litmus:install_module"]
       bundler_args: 
       env: PLATFORMS=centos7
-      rvm: 2.5.3
+      rvm: 2.5.7
       script: ["travis_wait 30 bundle exec rake litmus:acceptance:parallel"]
       services: docker
       stage: acceptance
       sudo: required
     -
-      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/debian:8]'", "bundle exec bolt command run 'apt-get install lsb-release gnupg iproute2 -y' --inventoryfile inventory.yaml --targets='localhost*'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
+      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/debian:8]'", "bundle exec bolt command run 'apt-get install lsb-release gnupg iproute2 -y' --inventoryfile inventory.yaml --targets='localhost*'", "bundle exec rake 'litmus:install_agent[puppet6]'", "bundle exec rake litmus:install_module"]
       bundler_args: 
       env: PLATFORMS=debian8
       script: ["travis_wait 30 bundle exec rake litmus:acceptance:parallel"]
@@ -67,7 +67,7 @@ matrix:
       stage: acceptance
       sudo: required
     -
-      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/debian:9]'", "bundle exec bolt command run 'apt-get install lsb-release gnupg iproute2 -y' --inventoryfile inventory.yaml --targets='localhost*'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
+      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/debian:9]'", "bundle exec bolt command run 'apt-get install lsb-release gnupg iproute2 -y' --inventoryfile inventory.yaml --targets='localhost*'", "bundle exec rake 'litmus:install_agent[puppet6]'", "bundle exec rake litmus:install_module"]
       bundler_args: 
       env: PLATFORMS=debian9
       script: ["travis_wait 30 bundle exec rake litmus:acceptance:parallel"]
@@ -75,7 +75,7 @@ matrix:
       stage: acceptance
       sudo: required
     -
-      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/ubuntu:16.04]'", "bundle exec bolt command run 'apt-get install lsb-release gnupg iproute2 -y' --inventoryfile inventory.yaml --targets='localhost*'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
+      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/ubuntu:16.04]'", "bundle exec bolt command run 'apt-get install lsb-release gnupg iproute2 -y' --inventoryfile inventory.yaml --targets='localhost*'", "bundle exec rake 'litmus:install_agent[puppet6]'", "bundle exec rake litmus:install_module"]
       bundler_args: 
       env: PLATFORMS=ubuntu16.04
       script: ["travis_wait 30 bundle exec rake litmus:acceptance:parallel"]
@@ -83,7 +83,7 @@ matrix:
       stage: acceptance
       sudo: required
     -
-      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/ubuntu:18.04]'", "bundle exec bolt command run 'apt-get install lsb-release gnupg iproute2 -y' --inventoryfile inventory.yaml --targets='localhost*'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
+      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/ubuntu:18.04]'", "bundle exec bolt command run 'apt-get install lsb-release gnupg iproute2 -y' --inventoryfile inventory.yaml --targets='localhost*'", "bundle exec rake 'litmus:install_agent[puppet6]'", "bundle exec rake litmus:install_module"]
       bundler_args: 
       env: PLATFORMS=ubuntu18.04
       script: ["travis_wait 30 bundle exec rake litmus:acceptance:parallel"]
@@ -95,10 +95,10 @@ matrix:
       stage: deploy
   allow_failures:
     -
-      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/centos:7]'", "bundle exec rake 'litmus:install_agent[puppet5]'", "bundle exec rake litmus:install_module"]
+      before_script: ["bundle exec rake 'litmus:provision[docker, litmusimage/centos:7]'", "bundle exec rake 'litmus:install_agent[puppet6]'", "bundle exec rake litmus:install_module"]
       bundler_args: 
       env: PLATFORMS=centos7
-      rvm: 2.5.3
+      rvm: 2.5.7
       script: ["travis_wait 30 bundle exec rake litmus:acceptance:parallel"]
       services: docker
       stage: acceptance
