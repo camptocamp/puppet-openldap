@@ -1,0 +1,8 @@
+---
+openldap::client::package: "openldap2-client"
+openldap::server::package: "openldap2"
+openldap::server::escape_ldapi_ifs: true
+openldap::server::enable_chown: true
+openldap::server::register_slp: true
+openldap::server::ldap_config_backend: "files"
+openldap::server::enable_memory_limit: true

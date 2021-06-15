@@ -1,0 +1,3 @@
+---
+openldap::server::package: "openldap-servers"
+openldap::utils::package: "openldap-clients"

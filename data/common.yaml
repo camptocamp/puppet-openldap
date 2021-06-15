@@ -1,0 +1,14 @@
+---
+openldap::client::package: "openldap"
+openldap::client::file: "/etc/openldap/ldap.conf"
+openldap::server::confdir: "/etc/openldap/slapd.d"
+openldap::server::conffile: "/etc/openldap/slapd.conf"
+openldap::server::group: "ldap"
+openldap::server::owner: "ldap"
+openldap::server::service: "slapd"
+openldap::utils::package: ~
+openldap::server::escape_ldapi_ifs: false
+openldap::server::enable_chown: ~
+openldap::server::register_slp: ~
+openldap::server::ldap_config_backend: ~
+openldap::server::enable_memory_limit: ~
