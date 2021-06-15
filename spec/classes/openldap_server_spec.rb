@@ -61,7 +61,8 @@ describe 'openldap::server' do
                                                                       ssl_key: nil,
                                                                       ssl_ca: nil)
               }
-              it { is_expected.to have_openldap__server__database_resource_count(0) }
+              it { is_expected.to have_openldap__server__database_resource_count(1) }
+              it { is_expected.to contain_openldap__server__database('dc=my-domain,dc=com').with(ensure: :absent) }
             else
               it {
                 is_expected.to contain_class('openldap::server').with(package: 'openldap-servers',
@@ -73,7 +74,8 @@ describe 'openldap::server' do
                                                                       ssl_key: nil,
                                                                       ssl_ca: nil)
               }
-              it { is_expected.to have_openldap__server__database_resource_count(0) }
+              it { is_expected.to have_openldap__server__database_resource_count(1) }
+              it { is_expected.to contain_openldap__server__database('dc=my-domain,dc=com').with(ensure: :absent) }
             end
           end
         end
