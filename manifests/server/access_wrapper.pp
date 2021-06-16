@@ -24,9 +24,8 @@ define openldap::server::access_wrapper (
   $acl,
   $suffix = $name,
 ) {
-
   # Parse ACL
-  $acl_yaml = inline_template('<%=
+$acl_yaml = inline_template('<%=
     position = -1
     @acl.map { |to,access|
       position = position + 1

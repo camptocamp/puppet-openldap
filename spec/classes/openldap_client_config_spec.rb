@@ -445,16 +445,18 @@ describe 'openldap::client::config' do
         it { is_expected.to contain_augeas('ldap.conf') }
         case facts[:osfamily]
         when 'Debian'
-          it { is_expected.to contain_augeas('ldap.conf').with({
-            :incl    => '/etc/ldap/ldap.conf',
-            :changes => [ 'set NSS_INITGROUPS_IGNOREUSERS ovahi,backup,games' ],
-          })
+          it {
+            is_expected.to contain_augeas('ldap.conf').with({
+                                                              incl: '/etc/ldap/ldap.conf',
+                                                              changes: ['set NSS_INITGROUPS_IGNOREUSERS ovahi,backup,games'],
+                                                            })
           }
         when 'RedHat'
-          it { is_expected.to contain_augeas('ldap.conf').with({
-            :incl    => '/etc/openldap/ldap.conf',
-            :changes => [ 'set NSS_INITGROUPS_IGNOREUSERS ovahi,backup,games' ],
-          })
+          it {
+            is_expected.to contain_augeas('ldap.conf').with({
+                                                              incl: '/etc/openldap/ldap.conf',
+                                                              changes: ['set NSS_INITGROUPS_IGNOREUSERS ovahi,backup,games'],
+                                                            })
           }
         end
       end

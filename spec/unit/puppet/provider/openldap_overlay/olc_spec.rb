@@ -19,8 +19,8 @@ describe Puppet::Type.type(:openldap_overlay).provider(:olc) do
     resource.provider
   end
 
-  before(:each) do
-    provider.stubs(:slapcat).returns('foo')
+  before do
+    allow(provider).to receive(:slapcat).and_return('foo')
   end
 
   describe 'when creating' do

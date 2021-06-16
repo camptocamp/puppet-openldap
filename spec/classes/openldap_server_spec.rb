@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+# rubocop:disable Style/IdenticalConditionalBranches
+# rubocop:disable RSpec/RepeatedExample
 describe 'openldap::server' do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
@@ -19,20 +21,20 @@ describe 'openldap::server' do
         context 'with no parameters' do
           it { is_expected.to compile.with_all_deps }
           it {
-            is_expected.to contain_class('openldap::server::install')
-              .that_comes_before('Class[openldap::server::config]')
+            is_expected.to contain_class('openldap::server::install').
+              that_comes_before('Class[openldap::server::config]')
           }
           it {
-            is_expected.to contain_class('openldap::server::config')
-              .that_notifies('Class[openldap::server::service]')
+            is_expected.to contain_class('openldap::server::config').
+              that_notifies('Class[openldap::server::service]')
           }
           it {
-            is_expected.to contain_class('openldap::server::service')
-              .that_comes_before('Class[openldap::server::slapdconf]')
+            is_expected.to contain_class('openldap::server::service').
+              that_comes_before('Class[openldap::server::slapdconf]')
           }
           it {
-            is_expected.to contain_class('openldap::server::slapdconf')
-              .that_comes_before('Class[openldap::server]')
+            is_expected.to contain_class('openldap::server::slapdconf').
+              that_comes_before('Class[openldap::server]')
           }
           case facts[:osfamily]
           when 'Debian'

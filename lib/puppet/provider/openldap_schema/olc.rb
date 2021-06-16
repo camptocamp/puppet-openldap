@@ -1,13 +1,17 @@
 require 'time'
 require File.expand_path(File.join(File.dirname(__FILE__), %w[.. openldap]))
 
+# rubocop:disable Style/VariableName
+# rubocop:disable Style/MethodName
+# rubocop:disable Lint/AssignmentInCondition
+# rubocop:disable Style/IfInsideElse
 Puppet::Type.
   type(:openldap_schema).
-  provide(:olc, :parent => Puppet::Provider::Openldap) do
+  provide(:olc, parent: Puppet::Provider::Openldap) do
 
   # TODO: Use ruby bindings (can't find one that support IPC)
 
-  defaultfor :osfamily => [:debian, :freebsd, :redhat, :suse]
+  defaultfor osfamily: [:debian, :freebsd, :redhat, :suse]
 
   mk_resource_methods
 
@@ -17,48 +21,46 @@ Puppet::Type.
       schema = { 'name' => nil, 'index' => nil, 'date' => nil }
       paragraph.split("\n").each do |line|
         case line
-        when /^cn: \{(\d+)\}(\S+)/
-          schema['name'] = "#{$2}"
-          schema['index'] = "#{$1}"
-        when /^modifyTimestamp: (\S+)/
-          schema['date'] = Time.strptime("#{$1}", '%Y%m%d%H%M%S%Z')
+        when %r{^cn: \{(\d+)\}(\S+)}
+          schema['name'] = Regexp.last_match(2).to_s
+          schema['index'] = Regexp.last_match(1).to_s
+        when %r{^modifyTimestamp: (\S+)}
+          schema['date'] = Time.strptime(Regexp.last_match(1).to_s, '%Y%m%d%H%M%S%Z')
         end
       end
 
-      if not schema['name'].nil?
-        schemas.push(schema)
-      end
+      schemas.push(schema) unless schema['name'].nil?
     end
-    schemas.map { |schema|
+    schemas.map do |schema|
       new(
-        :ensure => :present,
-        :index  => schema['index'],
-        :name   => schema['name'],
-        :date   => schema['date']
+        ensure: :present,
+        index: schema['index'],
+        name: schema['name'],
+        date: schema['date']
       )
-    }
+    end
   end
 
   def self.schemaToLdif(schema, name)
     ldif = [
       "dn: cn=#{name},cn=schema,cn=config",
-      "objectClass: olcSchemaConfig",
+      'objectClass: olcSchemaConfig',
       "cn: #{name}",
     ]
     schema.split("\n").each do |line|
       case line
-      when /^\s*#/    # Comments are ok
+      when %r{^\s*#} # Comments are ok
         ldif.push(line)
-      when /^$/   # Replace empty lines with comment
-        ldif.push("#")
-      when /^objectidentifier(.*)$/i    # Rewrite tags
-        ldif.push("olcObjectIdentifier:#{$1}")
-      when /^attributetype(.*)$/i
-        ldif.push("olcAttributeTypes:#{$1}")
-      when /^objectclass(.*)$/i
-        ldif.push("olcObjectClasses:#{$1}")
-      when /^\s+(.*)/   # Rewrite continuation whitespace
-        ldif.push("  #{$1}")    # One space to indicate continuation, plus one for spacing between words
+      when %r{^$} # Replace empty lines with comment
+        ldif.push('#')
+      when %r{^objectidentifier(.*)$}i # Rewrite tags
+        ldif.push("olcObjectIdentifier:#{Regexp.last_match(1)}")
+      when %r{^attributetype(.*)$}i
+        ldif.push("olcAttributeTypes:#{Regexp.last_match(1)}")
+      when %r{^objectclass(.*)$}i
+        ldif.push("olcObjectClasses:#{Regexp.last_match(1)}")
+      when %r{^\s+(.*)} # Rewrite continuation whitespace
+        ldif.push("  #{Regexp.last_match(1)}") # One space to indicate continuation, plus one for spacing between words
       else
         raise Puppet::Error, "Failed to parse schema line in schemaToLdif: '#{line}'"
       end
@@ -69,7 +71,7 @@ Puppet::Type.
   def self.schemaToLdifReplace(schema, name)
     ldif = [
       "dn: cn=#{name},cn=schema,cn=config",
-      "changetype: modify",
+      'changetype: modify',
     ]
     objId = []
     attrType = []
@@ -79,29 +81,27 @@ Puppet::Type.
 
     schema.split("\n").each do |line|
       case line
-      when /^\s*#/
+      when %r{^\s*#}
         next
-      when /^$/
+      when %r{^$}
         next
-      when /^objectidentifier(.*)$/i
+      when %r{^objectidentifier(.*)$}i
         current = objId
-        current.push("olcObjectIdentifier:#{$1}")
-      when /^attributetype(.*)$/i
+        current.push("olcObjectIdentifier:#{Regexp.last_match(1)}")
+      when %r{^attributetype(.*)$}i
         current = attrType
-        current.push("olcAttributeTypes:#{$1}")
-      when /^objectclass(.*)$/i
+        current.push("olcAttributeTypes:#{Regexp.last_match(1)}")
+      when %r{^objectclass(.*)$}i
         current = objClass
-        current.push("olcObjectClasses:#{$1}")
-      when /^\s+(.*)/
-        if not current.nil?
-          current.push("  #{$1}")
-        end
+        current.push("olcObjectClasses:#{Regexp.last_match(1)}")
+      when %r{^\s+(.*)}
+        current.push("  #{Regexp.last_match(1)}") unless current.nil?
       else
         raise Puppet::Error, "Failed to parse schema line in schemaToLdifReplace: '#{line}'"
       end
     end
 
-    if objId.length > 0
+    unless objId.empty?
       ldif.push('replace: olcObjectIdentifier')
       ldif.push(*objId)
       ldif.push('-')
@@ -121,7 +121,7 @@ Puppet::Type.
   def self.ldifReplace(ldif, name)
     new_ldif = [
       "dn: cn=#{name},cn=schema,cn=config",
-      "changetype: modify",
+      'changetype: modify',
     ]
     objId = []
     attrType = []
@@ -131,35 +131,33 @@ Puppet::Type.
 
     ldif.split("\n").each do |line|
       case line
-      when /^\s*#/
+      when %r{^\s*#}
         next
-      when /^$/
+      when %r{^$}
         next
-      when /^dn:/i
+      when %r{^dn:}i
         next
-      when /^cn:/i
+      when %r{^cn:}i
         next
-      when /objectClass:/i
+      when %r{objectClass:}i
         next
-      when /^olcObjectIdentifier:\s+(.*)$/i
+      when %r{^olcObjectIdentifier:\s+(.*)$}i
         current = objId
-        current.push("olcObjectIdentifier:#{$1}")
-      when /^olcAttributeTypes:\s+(.*)$/i
+        current.push("olcObjectIdentifier:#{Regexp.last_match(1)}")
+      when %r{^olcAttributeTypes:\s+(.*)$}i
         current = attrType
-        current.push("olcAttributeTypes:#{$1}")
-      when /^olcObjectClasses:\s+(.*)$/i
+        current.push("olcAttributeTypes:#{Regexp.last_match(1)}")
+      when %r{^olcObjectClasses:\s+(.*)$}i
         current = objClass
-        current.push("olcObjectClasses:#{$1}")
-      when /^\s+(.*)/
-        if not current.nil?
-          current.push("  #{$1}")
-        end
+        current.push("olcObjectClasses:#{Regexp.last_match(1)}")
+      when %r{^\s+(.*)}
+        current.push("  #{Regexp.last_match(1)}") unless current.nil?
       else
         raise Puppet::Error, "Failed to parse LDIF line in ldifReplace: '#{line}'"
       end
     end
 
-    if objId.length > 0
+    unless objId.empty?
       new_ldif.push('replace: olcObjectIdentifier')
       new_ldif.push(*objId)
       new_ldif.push('-')
@@ -191,22 +189,22 @@ Puppet::Type.
     begin
       schema = File.read(resource[:path])
       file_extention = File.extname(resource[:path])
-      if file_extention == '.schema'
-        if @property_hash[:ensure] == :present
-          t << self.class.schemaToLdifReplace(schema, "{#{@property_hash[:index]}}#{@property_hash[:name]}")
-        else
-          t << self.class.schemaToLdif(schema, resource[:name])
-        end
-      else
-        if @property_hash[:ensure] == :present
-          t << self.class.ldifReplace(schema, "{#{@property_hash[:index]}}#{@property_hash[:name]}")
-        else
-          t << schema
-        end
-      end
+      t << if file_extention == '.schema'
+             if @property_hash[:ensure] == :present
+               self.class.schemaToLdifReplace(schema, "{#{@property_hash[:index]}}#{@property_hash[:name]}")
+             else
+               self.class.schemaToLdif(schema, resource[:name])
+             end
+           else
+             if @property_hash[:ensure] == :present
+               self.class.ldifReplace(schema, "{#{@property_hash[:index]}}#{@property_hash[:name]}")
+             else
+               schema
+             end
+           end
       t.close
       ldapadd(t.path)
-    rescue Exception => e
+    rescue StandardError => e
       raise Puppet::Error, "LDIF content:\n#{IO.read t.path}\nError message: #{e.message}"
     end
     @property_hash[:ensure] = :present
@@ -225,6 +223,6 @@ Puppet::Type.
   end
 
   def destroy
-    raise Puppet::Error, "Removing schemas is not supported by this provider. Slapd needs to be stopped and the schema must be removed manually."
+    raise Puppet::Error, 'Removing schemas is not supported by this provider. Slapd needs to be stopped and the schema must be removed manually.'
   end
 end

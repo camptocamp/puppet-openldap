@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+# rubocop:disable RSpec/MessageSpies
+# rubocop:disable RSpec/DescribeSymbol
 describe :openldap_password do
   it { is_expected.not_to eq(nil) }
 

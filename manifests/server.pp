@@ -1,5 +1,5 @@
 # See README.md for details.
-class openldap::server(
+class openldap::server (
   $package                                          = $openldap::params::server_package,
   $confdir                                          = $openldap::params::server_confdir,
   $conffile                                         = $openldap::params::server_conffile,
@@ -29,13 +29,12 @@ class openldap::server(
   Optional[Stdlib::Absolutepath] $krb5_keytab_file  = undef,
   Optional[String] $ldap_config_backend             = $openldap::params::ldap_config_backend,
   Optional[Boolean] $enable_memory_limit            = $openldap::params::enable_memory_limit,
-) inherits ::openldap::params {
+) inherits openldap::params {
+  class { 'openldap::server::install': }
+  -> class { 'openldap::server::config': }
+  ~> class { 'openldap::server::service': }
 
-  class { '::openldap::server::install': }
-  -> class { '::openldap::server::config': }
-  ~> class { '::openldap::server::service': }
-
-  class { '::openldap::server::slapdconf': }
+  class { 'openldap::server::slapdconf': }
 
   case $provider {
     'augeas': {

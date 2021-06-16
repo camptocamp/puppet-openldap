@@ -14,7 +14,7 @@ describe 'openldap::server::database' do
       }
     EOS
 
-      idempotent_apply(pp)
+    idempotent_apply(pp)
   end
 
   after :all do
@@ -30,7 +30,7 @@ describe 'openldap::server::database' do
       }
     EOS
 
-      idempotent_apply(pp)
+    idempotent_apply(pp)
   end
 
   context 'without parameters' do

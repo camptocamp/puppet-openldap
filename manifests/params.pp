@@ -1,6 +1,6 @@
 # See README.md for details.
 class openldap::params {
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Debian': {
       $client_package           = 'libldap-2.4-2'
       $client_conffile          = '/etc/ldap/ldap.conf'
@@ -26,7 +26,7 @@ class openldap::params {
       $server_group             = 'ldap'
       $server_owner             = 'ldap'
       $server_package           = 'openldap-servers'
-      $server_service           = $::operatingsystemmajrelease ? {
+      $server_service           = $facts['os']['release']['major'] ? {
         '5' => 'ldap',
         default => 'slapd',
       }
@@ -90,7 +90,7 @@ class openldap::params {
       $enable_memory_limit      = true
     }
     default: {
-      fail "Operating System family ${::osfamily} not supported"
+      fail "Operating System family ${facts['os']['family']} not supported"
     }
   }
 }

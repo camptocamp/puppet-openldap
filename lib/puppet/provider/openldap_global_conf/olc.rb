@@ -1,12 +1,13 @@
 require File.expand_path(File.join(File.dirname(__FILE__), %w[.. openldap]))
 
+# rubocop:disable Lint/RescueException
 Puppet::Type.
   type(:openldap_global_conf).
-  provide(:olc, :parent => Puppet::Provider::Openldap) do
+  provide(:olc, parent: Puppet::Provider::Openldap) do
 
   # TODO: Use ruby bindings (can't find one that support IPC)
 
-  defaultfor :osfamily => [:debian, :freebsd, :redhat, :suse]
+  defaultfor osfamily: [:debian, :freebsd, :redhat, :suse]
 
   mk_resource_methods
 
@@ -15,11 +16,11 @@ Puppet::Type.
     options = {}
 
     # iterate olc options and removes any keys when it found any duplications
-    # such as olcServerID 
-    items.gsub("\n ", "").split("\n").select{|e| e =~ /^olc/}.collect do |line|
+    # such as olcServerID
+    items.gsub("\n ", '').split("\n").select { |e| e =~ %r{^olc} }.map do |line|
       name, value = line.split(': ')
       name = name[3, name.length]
-      if options[name] and !options[name].is_a?(Array)
+      if options[name] && !options[name].is_a?(Array)
         options[name] = [options[name]]
         options[name].push(value)
       elsif options[name]
@@ -31,11 +32,11 @@ Puppet::Type.
     new_instances = []
 
     # iterate options and creates new ProviderOlc instances
-    options.each do |k,v|
+    options.each do |k, v|
       new_instances << Puppet::Type::Openldap_global_conf::ProviderOlc.new(
-        :name   => k,
-        :ensure => :present,
-        :value  => v
+        name: k,
+        ensure: :present,
+        value: v
       )
     end
 
@@ -45,7 +46,7 @@ Puppet::Type.
   def self.prefetch(resources)
     items = instances
     resources.keys.each do |name|
-      if provider = items.find{ |item| item.name.downcase == name.downcase }
+      if (provider = items.find { |item| item.name.casecmp(name.downcase).zero? })
         resources[name].provider = provider
       end
     end
@@ -53,7 +54,7 @@ Puppet::Type.
 
   def exists?
     if resource[:value].is_a? Hash
-      (resource[:value].keys - self.class.instances.map { |item| item.name }).empty?
+      (resource[:value].keys - self.class.instances.map(&:name)).empty?
     else
       @property_hash[:ensure] == :present
     end
@@ -77,7 +78,7 @@ Puppet::Type.
       t << "olc#{resource[:name]}: #{resource[:value]}\n"
     end
     t.close
-    Puppet.debug(IO.read t.path)
+    Puppet.debug(IO.read(t.path))
     begin
       ldapmodify(t.path)
     rescue Exception => e
@@ -98,7 +99,7 @@ Puppet::Type.
       t << "delete: olc#{name}\n"
     end
     t.close
-    Puppet.debug(IO.read t.path)
+    Puppet.debug(IO.read(t.path))
     begin
       ldapmodify(t.path)
     rescue Exception => e
@@ -110,9 +111,9 @@ Puppet::Type.
   def value
     if resource[:value].is_a? Hash
       instances = self.class.instances
-      values = resource[:value].map do |k, v|
+      values = resource[:value].map do |k, _v|
         found = instances.find { |item| item.name == k }
-        [ k, found.get(:value) ] unless found.nil?
+        [k, found.get(:value)] unless found.nil?
       end
       Hash[values]
     else
@@ -138,7 +139,7 @@ Puppet::Type.
       t << "olc#{name}: #{value}\n"
     end
     t.close
-    Puppet.debug(IO.read t.path)
+    Puppet.debug(IO.read(t.path))
     begin
       ldapmodify(t.path)
     rescue Exception => e
@@ -146,5 +147,4 @@ Puppet::Type.
     end
     @property_hash[:value] = value
   end
-
 end

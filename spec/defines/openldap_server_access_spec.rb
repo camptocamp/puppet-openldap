@@ -89,11 +89,11 @@ describe 'openldap::server::access' do
 
         it { is_expected.to compile.with_all_deps }
         it {
-          is_expected.to contain_openldap_access('foo')
-            .with_position('0')
-            .with_what('to attrs=userPassword,shadowLastChange')
-            .with_suffix('dc=example,dc=com')
-            .with_access(['by dn="cn=admin,dc=example,dc=com" write', 'by anonymous read'])
+          is_expected.to contain_openldap_access('foo').
+            with_position('0').
+            with_what('to attrs=userPassword,shadowLastChange').
+            with_suffix('dc=example,dc=com').
+            with_access(['by dn="cn=admin,dc=example,dc=com" write', 'by anonymous read'])
         }
       end
     end

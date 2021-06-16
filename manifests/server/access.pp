@@ -1,5 +1,5 @@
 # See README.md for details.
-define openldap::server::access(
+define openldap::server::access (
   $ensure   = undef,
   $position = undef,
   $what     = undef,
@@ -7,12 +7,11 @@ define openldap::server::access(
   $access   = undef,
   $islast   = false,
 ) {
-
   if ! defined(Class['openldap::server']) {
     fail 'class ::openldap::server has not been evaluated'
   }
 
-  if $::openldap::server::provider == 'augeas' {
+  if $openldap::server::provider == 'augeas' {
     Class['openldap::server::install']
     -> Openldap::Server::Access[$title]
     ~> Class['openldap::server::service']
@@ -25,8 +24,8 @@ define openldap::server::access(
   openldap_access { $title:
     ensure   => $ensure,
     position => $position,
-    provider => $::openldap::server::provider,
-    target   => $::openldap::server::conffile,
+    provider => $openldap::server::provider,
+    target   => $openldap::server::conffile,
     what     => $what,
     suffix   => $suffix,
     access   => $access,

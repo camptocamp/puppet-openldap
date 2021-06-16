@@ -1,8 +1,7 @@
 #  This is a 'private' class used by openldap::server::access_wrapper
-define openldap::server::iterate_access(
+define openldap::server::iterate_access (
   $hash,
 ) {
-
   # Call individual openldap::server::access
   $position = $hash[$name]['position']
   $what     = $hash[$name]['what']
@@ -15,13 +14,12 @@ define openldap::server::iterate_access(
     fail('$access variable must be an array')
   }
 
-  if $position == 0 {  # the first entry
+  if $position == 0 { # the first entry
 
     openldap::server::access { "${position} on ${suffix}" :
       what   => $what,
       access => $access,
     }
-
   } elsif $position == $count { #the last entry
 
     $previous_position = $position - 1
@@ -31,15 +29,12 @@ define openldap::server::iterate_access(
       islast  => true,
       require => Openldap::Server::Access["${previous_position} on ${suffix}"],
     }
-
   } else {
-
     $previous_position = $position - 1
     openldap::server::access { "${position} on ${suffix}" :
       what    => $what,
       access  => $access,
       require => Openldap::Server::Access["${previous_position} on ${suffix}"],
     }
-
   }
 }

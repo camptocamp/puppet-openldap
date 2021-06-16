@@ -21,8 +21,7 @@ Puppet::Functions.create_function(:openldap_password) do
     return_type 'String'
   end
 
-
-  def generate_password(secret, scheme='SSHA')
+  def generate_password(secret, scheme = 'SSHA')
     case scheme[%r{([A-Z,0-9]+)}, 1]
     when 'CRYPT'
       salt = call_function(:fqdn_rand_string, 2)
@@ -32,7 +31,7 @@ Puppet::Functions.create_function(:openldap_password) do
     when 'SMD5'
       salt = call_function(:fqdn_rand_string, 8)
       md5_hash_with_salt = "#{Digest::MD5.digest(secret + salt)}#{salt}"
-      password = '{SMD5}' + [md5_hash_with_salt].pack('m').gsub("\n", '')
+      password = '{SMD5}' + [md5_hash_with_salt].pack('m').delete("\n")
     when 'SSHA'
       salt = call_function(:fqdn_rand_string, 8)
       password = '{SSHA}' + Base64.encode64("#{Digest::SHA1.digest(secret + salt)}#{salt}").chomp
@@ -43,6 +42,5 @@ Puppet::Functions.create_function(:openldap_password) do
     end
 
     password
-
   end
 end

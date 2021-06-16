@@ -4,47 +4,45 @@ Puppet::Type.newtype(:openldap_overlay) do
   ensurable
 
   newparam(:name) do
-    desc "The default namevar"
+    desc 'The default namevar'
   end
 
   newparam(:target) do
-    desc "The slapd.conf file"
+    desc 'The slapd.conf file'
   end
 
   newproperty(:index) do
-    desc "The index of the overlay."
+    desc 'The index of the overlay.'
   end
 
-  newparam(:overlay, :namevar => true) do
-    desc "The name of the overlay to apply"
+  newparam(:overlay, namevar: true) do
+    desc 'The name of the overlay to apply'
   end
 
-  newparam(:suffix, :namevar => true) do
-    desc "The suffix to which the overlay applies"
+  newparam(:suffix, namevar: true) do
+    desc 'The suffix to which the overlay applies'
   end
 
   def self.title_patterns
     [
       [
-        /^((\S+)\s+on\s+(\S+))$/,
+        %r{^((\S+)\s+on\s+(\S+))$},
         [
-          [ :name ],
-          [ :overlay ],
-          [ :suffix ],
+          [:name],
+          [:overlay],
+          [:suffix],
         ],
       ],
       [
-        /(.*)/,
+        %r{(.*)},
         [
-          [ :name ],
+          [:name],
         ],
       ],
     ]
   end
 
   newproperty(:options) do
-    desc "Overlay options."
+    desc 'Overlay options.'
   end
-
 end
-

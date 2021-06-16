@@ -1,42 +1,41 @@
 # See README.md for details.
 class openldap::server::config (
-  $slapd_params        = $::openldap::server::slapd_params,
-  $owner                = $::openldap::server::owner,
-  $group               = $::openldap::server::group,
-  $enable_chown        = $::openldap::server::enable_chown,
-  $ldap_port           = $::openldap::server::ldap_port,
-  $ldap_address        = $::openldap::server::ldap_address,
-  $ldaps_port          = $::openldap::server::ldaps_port,
-  $ldaps_address       = $::openldap::server::ldaps_address,
-  $ldapi_socket_path   = $::openldap::server::ldapi_socket_path,
-  $register_slp        = $::openldap::server::register_slp,
-  $krb5_keytab_file    = $::openldap::server::krb5_keytab_file,
-  $ldap_config_backend = $::openldap::server::ldap_config_backend,
-  $enable_memory_limit = $::openldap::server::enable_memory_limit,
-){
-
+  $slapd_params        = $openldap::server::slapd_params,
+  $owner                = $openldap::server::owner,
+  $group               = $openldap::server::group,
+  $enable_chown        = $openldap::server::enable_chown,
+  $ldap_port           = $openldap::server::ldap_port,
+  $ldap_address        = $openldap::server::ldap_address,
+  $ldaps_port          = $openldap::server::ldaps_port,
+  $ldaps_address       = $openldap::server::ldaps_address,
+  $ldapi_socket_path   = $openldap::server::ldapi_socket_path,
+  $register_slp        = $openldap::server::register_slp,
+  $krb5_keytab_file    = $openldap::server::krb5_keytab_file,
+  $ldap_config_backend = $openldap::server::ldap_config_backend,
+  $enable_memory_limit = $openldap::server::enable_memory_limit,
+) {
   if ! defined(Class['openldap::server']) {
     fail 'class ::openldap::server has not been evaluated'
   }
-  $slapd_ldap_ifs = empty($::openldap::server::ldap_ifs) ? {
-    false => join(prefix($::openldap::server::ldap_ifs, 'ldap://'), ' '),
+  $slapd_ldap_ifs = empty($openldap::server::ldap_ifs) ? {
+    false => join(prefix($openldap::server::ldap_ifs, 'ldap://'), ' '),
     true  => '',
   }
-  $escaped_ldapi_ifs = $::openldap::server::escape_ldapi_ifs ? {
-    true  => regsubst($::openldap::server::ldapi_ifs, '/', '%2F', 'G'),
-    false => $::openldap::server::ldapi_ifs,
+  $escaped_ldapi_ifs = $openldap::server::escape_ldapi_ifs ? {
+    true  => regsubst($openldap::server::ldapi_ifs, '/', '%2F', 'G'),
+    false => $openldap::server::ldapi_ifs,
   }
-  $slapd_ldapi_ifs = empty($::openldap::server::ldapi_ifs) ? {
+  $slapd_ldapi_ifs = empty($openldap::server::ldapi_ifs) ? {
     false => join(prefix($escaped_ldapi_ifs, 'ldapi://'), ' '),
     true  => '',
   }
-  $slapd_ldaps_ifs = empty($::openldap::server::ldaps_ifs) ? {
-    false  => join(prefix($::openldap::server::ldaps_ifs, 'ldaps://'), ' '),
+  $slapd_ldaps_ifs = empty($openldap::server::ldaps_ifs) ? {
+    false  => join(prefix($openldap::server::ldaps_ifs, 'ldaps://'), ' '),
     true => '',
   }
   $slapd_ldap_urls = "${slapd_ldap_ifs} ${slapd_ldapi_ifs} ${slapd_ldaps_ifs}"
 
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Debian': {
       shellvar { 'slapd':
         ensure   => present,
@@ -46,8 +45,8 @@ class openldap::server::config (
       }
     }
     'RedHat': {
-      if versioncmp($::operatingsystemmajrelease, '6') <= 0 {
-        $ldap = empty($::openldap::server::ldap_ifs) ? {
+      if versioncmp($facts['os']['release']['major'], '6') <= 0 {
+        $ldap = empty($openldap::server::ldap_ifs) ? {
           false => 'yes',
           true  => 'no',
         }
@@ -57,7 +56,7 @@ class openldap::server::config (
           variable => 'SLAPD_LDAP',
           value    => $ldap,
         }
-        $ldaps = empty($::openldap::server::ldaps_ifs) ? {
+        $ldaps = empty($openldap::server::ldaps_ifs) ? {
           false => 'yes',
           true  => 'no',
         }
@@ -67,7 +66,7 @@ class openldap::server::config (
           variable => 'SLAPD_LDAPS',
           value    => $ldaps,
         }
-        $ldapi = empty($::openldap::server::ldapi_ifs) ? {
+        $ldapi = empty($openldap::server::ldapi_ifs) ? {
           false => 'yes',
           true  => 'no',
         }
@@ -108,7 +107,7 @@ class openldap::server::config (
         ensure   => present,
         target   => '/etc/rc.conf',
         variable => 'slapd_sockets',
-        value    => join($::openldap::server::ldapi_ifs, ' '),
+        value    => join($openldap::server::ldapi_ifs, ' '),
         quoted   => 'double',
       }
 
@@ -123,15 +122,15 @@ class openldap::server::config (
       }
     }
     'Suse': {
-      $start_ldap = empty($::openldap::server::ldapi_ifs) ? {
+      $start_ldap = empty($openldap::server::ldapi_ifs) ? {
         false  => 'yes',
         true   => 'no',
       }
-      $start_ldapi = empty($::openldap::server::ldapi_ifs) ? {
+      $start_ldapi = empty($openldap::server::ldapi_ifs) ? {
         false  => 'yes',
         true   => 'no',
       }
-      $start_ldaps = empty($::openldap::server::ldaps_ifs) ? {
+      $start_ldaps = empty($openldap::server::ldaps_ifs) ? {
         false  => 'yes',
         true   => 'no',
       }
@@ -264,7 +263,7 @@ class openldap::server::config (
       }
     }
     default: {
-      fail "Operating System Family ${::osfamily} not yet supported"
+      fail "Operating System Family ${facts['os']['family']} not yet supported"
     }
   }
 }

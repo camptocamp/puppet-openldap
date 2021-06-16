@@ -102,7 +102,7 @@ Configuring multiple olc serverIDs for multiple master or mirror mode
 openldap::server::globalconf { 'ServerID':
   ensure  => present,
   value   => { 'ServerID' => [ '1 ldap://master1.example.com', '2 ldap://master2.example.com' ] }
-} 
+}
 ```
 
 Configuring security for global
@@ -110,7 +110,7 @@ Configuring security for global
 ```puppet
 openldap::server::globalconf { 'Security':
   ensure  => present,
-	value   => { 'Security' => [ 'simple_bind=128', 'ssf=128', 'tls=0' ] } 
+	value   => { 'Security' => [ 'simple_bind=128', 'ssf=128', 'tls=0' ] }
 ```
 
 ### Configuring a database
@@ -188,7 +188,7 @@ openldap::server::access { '0 on dc=example,dc=com':
 ```
 
 from the openldap [documentation](http://www.openldap.org/doc/admin24/slapdconf2.html)
-> The frontend is a special database that is used to hold database-level 
+> The frontend is a special database that is used to hold database-level
 options that should be applied to all the other databases. Subsequent database
 definitions may also override some frontend settings.
 

@@ -1,6 +1,6 @@
-def ldapsearch(cmd, exit_codes = [0, 1], &block)
-  puts "shell() not working in litmus for now"
-  #shell("ldapsearch #{cmd}", acceptable_exit_codes: exit_codes, &block)
+def ldapsearch(_cmd, _exit_codes = [0, 1])
+  puts 'shell() not working in litmus for now'
+  # shell("ldapsearch #{cmd}", acceptable_exit_codes: exit_codes, &block)
 end
 
 RSpec.configure do |c|
@@ -50,4 +50,3 @@ RSpec.configure do |c|
     idempotent_apply(pp)
   end
 end
-

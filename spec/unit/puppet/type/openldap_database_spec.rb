@@ -1,10 +1,11 @@
 require 'spec_helper'
 
+# rubocop:disable RSpec/InstanceVariable
 describe Puppet::Type.type(:openldap_database) do
-  before(:each) do
+  before do
     @provider_class = described_class.provide(:simple) { mk_resource_methods }
-    @provider_class.stubs(:suitable?).returns true
-    described_class.stubs(:defaultprovider).returns @provider_class
+    allow(@provider_class).to receive(:suitable?).and_return(true)
+    allow(described_class).to receive(:defaultprovider).and_return(@provider_class)
   end
 
   describe 'namevar validation' do
@@ -51,7 +52,7 @@ describe Puppet::Type.type(:openldap_database) do
     end
 
     describe 'backend' do
-      ['bdb', 'hdb', 'mdb', 'monitor', 'config', 'relay', 'ldap'].each do |b|
+      %w[bdb hdb mdb monitor config relay ldap].each do |b|
         it "should support #{b} as a value for backend" do
           expect { described_class.new(name: 'foo', backend: b) }.not_to raise_error
         end
@@ -76,7 +77,7 @@ describe Puppet::Type.type(:openldap_database) do
   end
 
   describe 'rootpw' do
-    before(:each) do
+    before do
       @resource = described_class.new(name: 'foo')
       @password = described_class.attrclass(:rootpw).new(resource: @resource, should: 'secret')
     end

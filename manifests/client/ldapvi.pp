@@ -1,5 +1,5 @@
 # See README.md for details.
-class openldap::client::ldapvi(
+class openldap::client::ldapvi (
   $package = 'ldapvi',
 ) {
   package { $package:
