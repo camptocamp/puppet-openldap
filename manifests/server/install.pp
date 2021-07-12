@@ -5,9 +5,7 @@ class openldap::server::install {
     fail 'class ::openldap::server has not been evaluated'
   }
 
-  if $::openldap::server::provider == 'olc' {
-    contain ::openldap::utils
-  }
+  contain ::openldap::utils
 
   if $::osfamily == 'Debian' {
     file { '/var/cache/debconf/slapd.preseed':

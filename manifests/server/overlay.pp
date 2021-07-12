@@ -10,21 +10,14 @@ define openldap::server::overlay(
     fail 'class ::openldap::server has not been evaluated'
   }
 
-  if $::openldap::server::provider == 'augeas' {
-    Class['openldap::server::install']
-    -> Openldap::Server::Overlay[$title]
-    ~> Class['openldap::server::service']
-  } else {
-    Class['openldap::server::service']
-    -> Openldap::Server::Overlay[$title]
-    -> Class['openldap::server']
-  }
+  Class['openldap::server::service']
+  -> Openldap::Server::Overlay[$title]
+  -> Class['openldap::server']
 
   openldap_overlay { "${overlay} on ${suffix}":
-    ensure   => $ensure,
-    provider => $::openldap::server::provider,
-    overlay  => $overlay,
-    suffix   => $suffix,
-    options  => $options,
+    ensure  => $ensure,
+    overlay => $overlay,
+    suffix  => $suffix,
+    options => $options,
   }
 }

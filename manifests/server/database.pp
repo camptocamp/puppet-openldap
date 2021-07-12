@@ -39,15 +39,9 @@ define openldap::server::database(
     },
   }
 
-  if $::openldap::server::provider == 'augeas' {
-    Class['openldap::server::install']
-    -> Openldap::Server::Database[$title]
-    ~> Class['openldap::server::service']
-  } else {
-    Class['openldap::server::service']
-    -> Openldap::Server::Database[$title]
-    -> Class['openldap::server']
-  }
+  Class['openldap::server::service']
+  -> Openldap::Server::Database[$title]
+  -> Class['openldap::server']
   if $title != 'dc=my-domain,dc=com' and $::osfamily == 'Debian' {
     Openldap::Server::Database['dc=my-domain,dc=com'] -> Openldap::Server::Database[$title]
   }
@@ -65,7 +59,6 @@ define openldap::server::database(
     ensure          => $ensure,
     suffix          => $suffix,
     relay           => $relay,
-    provider        => $::openldap::server::provider,
     target          => $::openldap::server::conffile,
     backend         => $backend,
     directory       => $manage_directory,

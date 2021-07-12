@@ -15,22 +15,11 @@ define openldap::server::schema(
     fail 'class ::openldap::server has not been evaluated'
   }
 
-  if $::openldap::server::provider == 'augeas' {
-    Class['openldap::server::install']
-    -> Openldap::Server::Schema[$title]
-    ~> Class['openldap::server::service']
-    file_line{$title:
-      path => $::openldap::server::conffile,
-      line => "include ${path}",
-    }
-  } else {
-    Class['openldap::server::service']
-    -> Openldap::Server::Schema[$title]
-    -> Class['openldap::server']
-    openldap_schema { $title:
-      ensure   => $ensure,
-      path     => $path,
-      provider => $::openldap::server::provider,
-    }
+  Class['openldap::server::service']
+  -> Openldap::Server::Schema[$title]
+  -> Class['openldap::server']
+  openldap_schema { $title:
+    ensure => $ensure,
+    path   => $path,
   }
 }
