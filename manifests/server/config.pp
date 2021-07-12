@@ -92,7 +92,7 @@ class openldap::server::config (
         ensure   => present,
         target   => '/etc/rc.conf',
         variable => 'slapd_cn_config',
-        value    => bool2str($openldap::server::provider == 'olc', 'YES', 'NO'),
+        value    => 'YES',
         quoted   => 'double',
       }
 
@@ -112,14 +112,12 @@ class openldap::server::config (
         quoted   => 'double',
       }
 
-      if ($openldap::server::provider == 'olc') {
-        # On FreeBSD we need to bootstrap slapd.d
-        $ldif = file('openldap/cn-config.ldif')
-        exec { 'bootstrap cn=config':
-          path    => '/usr/local/sbin',
-          command => "echo '${ldif}' | slapadd -n 0 -F ${openldap::server::confdir}",
-          creates => "${openldap::server::confdir}/cn=config.ldif",
-        }
+      # On FreeBSD we need to bootstrap slapd.d
+      $ldif = file('openldap/cn-config.ldif')
+      exec { 'bootstrap cn=config':
+        path    => '/usr/local/sbin',
+        command => "echo '${ldif}' | slapadd -n 0 -F ${openldap::server::confdir}",
+        creates => "${openldap::server::confdir}/cn=config.ldif",
       }
     }
     'Suse': {

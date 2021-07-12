@@ -7,14 +7,6 @@ describe 'openldap::server' do
         facts
       end
 
-      context 'with an unknown provider' do
-        let :pre_condition do
-          "class {'openldap::server': provider => 'foo'}"
-        end
-
-        it { expect { is_expected.to compile }.to raise_error(%r{provider must be one of "olc" or "augeas"}) }
-      end
-
       context 'with olc provider' do
         context 'with no parameters' do
           it { is_expected.to compile.with_all_deps }
@@ -41,7 +33,6 @@ describe 'openldap::server' do
                                                                     service: 'slapd',
                                                                     enable: true,
                                                                     start: true,
-                                                                    provider: 'olc',
                                                                     ssl_cert: nil,
                                                                     ssl_key: nil,
                                                                     ssl_ca: nil)
@@ -56,7 +47,6 @@ describe 'openldap::server' do
                                                                       service: 'ldap',
                                                                       enable: true,
                                                                       start: true,
-                                                                      provider: 'olc',
                                                                       ssl_cert: nil,
                                                                       ssl_key: nil,
                                                                       ssl_ca: nil)
@@ -68,7 +58,6 @@ describe 'openldap::server' do
                                                                       service: 'slapd',
                                                                       enable: true,
                                                                       start: true,
-                                                                      provider: 'olc',
                                                                       ssl_cert: nil,
                                                                       ssl_key: nil,
                                                                       ssl_ca: nil)

@@ -13,18 +13,18 @@ Overview
 The openldap module allows you to easily manage OpenLDAP with Puppet.
 By default it will use OLC (cn=config).
 
-Features supported per provider
--------------------------------
+Features supported
+------------------
 
-Object      | olc (slapd.d) | augeas (slapd.conf)
-------------|---------------|-----------
-global_conf | Y             | N
-database    | Y             | Y
-module      | Y             | N
-overlay     | Y             | N
-access      | Y             | N
-index       | Y             | N
-schema      | Y             | N
+Object      | olc (slapd.d) 
+------------|--------------
+global_conf | Y             
+database    | Y             
+module      | Y             
+overlay     | Y             
+access      | Y             
+index       | Y             
+schema      | Y             
 
 Usage
 -----
@@ -76,14 +76,6 @@ class { 'openldap::server':
       directory => '/var/lib/ldap/bar',
     },
   },
-}
-```
-
-To force using slapd.conf:
-
-```puppet
-class { 'openldap::server':
-  provider => 'augeas',
 }
 ```
 

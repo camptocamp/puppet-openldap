@@ -30,7 +30,6 @@ describe 'openldap::server::overlay' do
         it {
           is_expected.to contain_openldap_overlay('memberof on dc=example,dc=com')
             .with_ensure('present')
-            .with_provider('olc')
             .with_overlay('memberof')
             .with_suffix('dc=example,dc=com')
         }
@@ -50,7 +49,6 @@ describe 'openldap::server::overlay' do
         it {
           is_expected.to contain_openldap_overlay('memberof on dc=example,dc=com')
             .with_ensure('present')
-            .with_provider('olc')
             .with_overlay('memberof')
             .with_suffix('dc=example,dc=com')
             .with_options(['olcMemberOfGroupOC: groupOfNames'])
